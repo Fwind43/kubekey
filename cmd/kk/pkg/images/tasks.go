@@ -27,15 +27,14 @@ import (
 
 	manifestregistry "github.com/estesp/manifest-tool/v2/pkg/registry"
 	manifesttypes "github.com/estesp/manifest-tool/v2/pkg/types"
-	"github.com/pkg/errors"
-	versionutil "k8s.io/apimachinery/pkg/util/version"
-
 	kubekeyv1alpha2 "github.com/kubesphere/kubekey/v3/cmd/kk/apis/kubekey/v1alpha2"
 	"github.com/kubesphere/kubekey/v3/cmd/kk/pkg/common"
 	"github.com/kubesphere/kubekey/v3/cmd/kk/pkg/core/connector"
 	"github.com/kubesphere/kubekey/v3/cmd/kk/pkg/core/logger"
 	coreutil "github.com/kubesphere/kubekey/v3/cmd/kk/pkg/core/util"
 	"github.com/kubesphere/kubekey/v3/cmd/kk/pkg/registry"
+	"github.com/pkg/errors"
+	versionutil "k8s.io/apimachinery/pkg/util/version"
 )
 
 type PullImage struct {
@@ -216,7 +215,12 @@ func (s *SaveImages) Execute(runtime connector.Runtime) error {
 					},
 				},
 			}
-
+			if res, err := o.Check(); err == nil {
+				if res == false {
+					logger.Log.Warnf("[%d]skip %s has not arch %s", index, srcName, arch)
+					continue
+				}
+			}
 			// Copy image
 			// retry 3 times
 			for i := 0; i < 3; i++ {

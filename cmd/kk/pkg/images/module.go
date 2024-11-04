@@ -50,7 +50,7 @@ func (p *PullModule) Init() {
 type CopyImagesToLocalModule struct {
 	common.ArtifactModule
 	ImageStartIndex int
-	ImageTransport string
+	ImageTransport  string
 }
 
 func (c *CopyImagesToLocalModule) Init() {
